@@ -1,0 +1,171 @@
+<html>
+
+<head>
+<title>Click to count</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script type="text/javascript">
+	var lenx = 0;
+	var max_lenx = 10;
+	const max_len = 1000;
+	var time_sum = 0;
+
+	function OncClick()
+	{
+		lenx++;
+		timeStop();
+		time_sum+=Number(time);
+		timeReposition();
+		if (lenx > max_lenx)
+		{
+			lenx = 0;
+			time_sum = 0;
+		}
+		document.getElementById('progress').innerHTML=
+			parseFloat((lenx/max_lenx*100).toFixed(2))+"%"+
+			"<style type=\"text/css\">\
+			#progress\
+			{\
+				width:"+lenx/max_lenx*max_len+";\
+				height: 100;\
+				border-radius: 10px;\
+				background: #e0e0e0;\
+				box-shadow:  10px 10px 20px #bebebe,\
+             				-10px -10px 20px #ffffff;\
+            	font-family:\"San Francisco Display\";\
+				font-size:3em;\
+            	text-align: center;\
+            	line-height:100px ;\
+			}\
+			</style>";
+			document.getElementById('ptext').innerHTML=lenx+" / "+max_lenx;
+
+			showInfo();
+		timeStart();
+	}
+	function OnTimeBtnClick()
+	{
+		isRunning = !isRunning;
+		if (isRunning)
+		{
+			timeStart();
+		}
+		else
+		{
+			timeStop();
+		}
+	}
+
+	var time = Number(0);
+	var timer;
+	var isRunning = true;
+	setInterval(timeShow, 1);
+	function OnsClick()
+	{
+		var maxx = prompt("Max("+max_lenx+") = ");
+		if (maxx > 0 && maxx != null)
+			max_lenx = maxx;
+		lenx = 0;
+		document.getElementById('ptext').innerHTML=lenx+" / "+max_lenx;
+	}
+	function timeStart()
+	{
+		timer=setInterval(function(){
+			time++;
+			time_sum+=time;
+			showInfo();
+			time_sum-=time;
+		}, 10);
+		isRunning = true;
+		document.getElementById("timeBtn").value="Time Stop";
+	}
+	function timeStop()
+	{
+		clearInterval(timer);
+		document.getElementById("timeBtn").value="Time Start";
+	}
+	function timeReposition()
+	{
+		clearInterval(timer);
+		time = 0;
+	}
+	function timeShow()
+	{
+		var times=time;
+		var hours = Math.floor(times/360000);
+		var minutes=Math.floor(times/6000)%60;
+ 		var seconds=Math.floor(times/100)%60;
+ 		var millions=times%100;
+ 		document.getElementById("time").innerHTML=
+ 		"<font id=\"bigText\">"+APZ(hours)+":"+APZ(minutes)+":"+APZ(seconds)+
+ 		"</font><font id=\"smallText\">."+APZ(millions)+"</font>";
+	}
+	function APZ(num)
+	{
+		if (isNaN(num))
+			return ("00");
+		if(num == 0)
+		 	return ("00");
+		else if(num < 10 && num >0)
+			return ("0"+num);
+		else
+			return Math.floor(num).toString();
+	}
+	window.onload=init;
+	function init()
+	{
+		time_sum = 0;
+		document.getElementById("timeBtn").value="Time Stop";
+		document.getElementById('ptext').innerHTML=lenx+" / "+max_lenx;
+		showInfo();
+	}
+	function showInfo()
+	{
+		var times=time_sum/((lenx==0)?(1):(lenx));
+			var hours = Math.floor(times/360000);
+			var minutes=Math.floor(times/6000)%60;
+ 			var seconds=Math.floor(times/100)%60;
+ 			var millions=times%100;
+ 			document.getElementById("avg").innerHTML="<p>Average : "+APZ(hours)+":"+APZ(minutes)+":"+APZ(seconds)+"</p>";
+
+			times=time_sum;
+			hours = Math.floor(times/360000);
+			minutes=Math.floor(times/6000)%60;
+ 			seconds=Math.floor(times/100)%60;
+ 			millions=times%100;
+ 			document.getElementById("avg").innerHTML+="<p>Past : "+APZ(hours)+":"+APZ(minutes)+":"+APZ(seconds)+"</p>";
+
+ 			times=time_sum/((lenx==0)?(1):(lenx))*max_lenx;
+			hours = Math.floor(times/360000);
+			minutes=Math.floor(times/6000)%60;
+ 			seconds=Math.floor(times/100)%60;
+ 			millions=times%100;
+ 			document.getElementById("avg").innerHTML+="<p>Total(E) : "+APZ(hours)+":"+APZ(minutes)+":"+APZ(seconds)+"</p>";
+
+ 			times-=time_sum;
+			hours = Math.floor(times/360000);
+			minutes=Math.floor(times/6000)%60;
+ 			seconds=Math.floor(times/100)%60;
+ 			millions=times%100;
+ 			document.getElementById("avg").innerHTML+="<p>Remain(E) : "+APZ(hours)+":"+APZ(minutes)+":"+APZ(seconds)+"</p>";
+	}
+</script>
+</head>
+
+<body>
+	<input type="button" value="Tick" id="cButton" onclick="OncClick()"></input>
+	<input type="button" value="Set goal" id="sButton" onclick="OnsClick()"></input>
+	<div id="avg"></div>
+	<div id="timeShow">
+		<div id="time"></div>
+		<input type="button" id="timeBtn" onclick="OnTimeBtnClick()"></input>
+	</div>
+	<div id="progressBar">
+		<div id="progress"></div>
+		<style type="text/css">
+
+		</style>
+		<div id="ptext"></div>
+	</div>
+</body>
+
+</html>
